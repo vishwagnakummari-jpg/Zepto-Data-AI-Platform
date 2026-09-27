@@ -155,37 +155,65 @@ LIMIT 5;
 
 The following outputs should be copied from the **latest execution of `data_pipeline.py`**.
 
-### Query 1
+## Query Results
+
+## Query 1 — SELECT / WHERE / LIMIT
 
 ```text
-PASTE ACTUAL QUERY 1 OUTPUT HERE
+title                                                                  price_gbp  price_inr  rating
+1,000 Places to See Before You Die                                      26.08    2751.44       5
+A Time of Torment (Charlie Parker #14)                                  48.35    5100.92       5
+What Happened on Beale Street (Secrets of the South Mysteries #2)        25.37    2676.54       5
+The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1) 52.30    5517.65       5
+The Silkworm (Cormoran Strike #2)                                       23.05    2431.78       5
 ```
 
-### Query 2
+## Query 2 — ORDER BY / LIMIT
 
 ```text
-PASTE ACTUAL QUERY 2 OUTPUT HERE
+title                                                                  price_inr  rating
+Boar Island (Anna Pigeon #19)                                          6275.14       3
+The No. 1 Ladies' Detective Agency (No. 1 Ladies' Detective Agency #1) 6087.35       4
+A Year in Provence (Provence #1)                                      6000.84       4
+The Past Never Ends                                                     5960.75       4
+The Last Painting of Sara de Vos                                        5860.52       2
 ```
 
-### Query 3
+## Query 3 — DISTINCT
 
 ```text
-PASTE ACTUAL QUERY 3 OUTPUT HERE
+rating
+1
+2
+3
+4
+5
 ```
 
-### Query 4
+## Query 4 — BETWEEN / IN
 
 ```text
-PASTE ACTUAL QUERY 4 OUTPUT HERE
+title                                                                  price_gbp  rating
+1,000 Places to See Before You Die                                      26.08       5
+What Happened on Beale Street (Secrets of the South Mysteries #2)        25.37       5
+Delivering the Truth (Quaker Midwife Mystery #1)                         20.89       4
+The Mysterious Affair at Styles (Hercule Poirot #1)                      24.80       4
+The Silkworm (Cormoran Strike #2)                                       23.05       5
 ```
 
-### Query 5
+## Query 5 — JOIN
 
 ```text
-PASTE ACTUAL QUERY 5 OUTPUT HERE
+title                                                                  category_name      price_inr  rating
+A Flight of Arrows (The Pathfinders #2)                                Historical Fiction    5858.42       5
+The Bachelor Girl's Guide to Murder (Herringford and Watts Mysteries #1) Mystery             5517.65       5
+A Time of Torment (Charlie Parker #14)                                  Mystery             5100.92       5
+While You Were Mine                                                    Historical Fiction    4359.26       5
+The Red Tent                                                           Historical Fiction    3762.13       5
 ```
 
----
+##
+
 
 ## SQL vs Pandas Validation
 
