@@ -1,74 +1,107 @@
-# Module 2: Analytics & Machine Learning Pipeline (`/analytics`)
+# Module 2: Analytics & Machine Learning Pipeline
 
 ## Overview
 
-This module profiles and models the Titanic dataset through a unified analytics and machine learning pipeline. The dataset is loaded locally from `analytics/data/titanic.csv` and processed through data profiling, cleaning, visualization, classification, class imbalance handling, hyperparameter tuning, and regression.
+This module performs exploratory data analysis and machine learning on the Titanic dataset. It covers data profiling, missing-value handling, outlier analysis, visualization, classification, class-imbalance handling, Random Forest tuning, and a fare regression task.
+
+The committed `titanic.csv` file is used as the offline dataset for modeling.
 
 ---
 
 ## Part A: Data Profiling & Visual Interpretation
 
-### 1. Missing Value Strategy & Thresholds
+### Missing Value Strategy
 
-* **`deck`:** The column contains a high percentage of missing values and was removed during preprocessing.
+- `deck`: removed because of its high percentage of missing values.
+- `age`: median imputation was used because its missing percentage falls within the 5%–30% range.
+- `embarked`: rows with missing values were removed because the missing percentage is below 5%.
+- `embark_town`: not used because it duplicates the information represented by `embarked`.
 
-* **`age`:** Missing values were handled using **median imputation** to preserve the dataset while reducing the effect of extreme values.
+### Outliers & Skewness
 
-* **`embarked`:** Rows with missing `embarked` values were removed because the number of missing records was very small.
+- Age and fare outliers were identified using the IQR method.
+- Fare mean, median, and mode were compared to assess its skewness.
 
-* **`embark_town`:** Removed as a redundant representation of the `embarked` information.
+### Correlation Analysis
 
-### 2. Outliers & Skewness
+The correlation matrix uses exactly:
 
-* **Age Outliers:** Outliers were identified using the IQR rule (`Q1 - 1.5 × IQR` and `Q3 + 1.5 × IQR`).
+`survived`, `pclass`, `age`, `sibsp`, `parch`, `fare`
 
-* **Fare Outliers:** Fare contains noticeable high-value observations, which were identified using the IQR method.
+The strongest absolute off-diagonal correlations are identified and interpreted in `01_eda.ipynb`.
 
-* **Fare Skewness:** The mean fare is higher than the median fare, indicating a **right-skewed distribution** caused by relatively high fare values.
+### Visual Analysis
 
-### 3. Correlation Matrix & Top 2 Off-Diagonal Features
+The analysis includes:
 
-The correlation matrix was calculated strictly on the six numeric columns (`survived`, `pclass`, `age`, `sibsp`, `parch`, `fare`):
-
-1. **`pclass` & `fare`:** A negative relationship is observed between passenger class and fare. Lower class numbers are associated with higher fare values.
-
-2. **`sibsp` & `parch`:** A positive relationship is observed, indicating that passengers traveling with siblings/spouses also tended to have parents/children recorded in the dataset.
-
-### 4. Visual Data Story Conclusions
-
-1. **Gender & Class:** Survival rates vary considerably across passenger gender and class groups.
-
-2. **Class & Fare:** Passenger class and fare show noticeable relationships with survival outcomes.
-
-3. **Age Distribution:** Survival patterns vary across different age groups.
-
-4. **Family Size Dynamics:** Survival rates differ across passengers with different family-related characteristics represented by `sibsp` and `parch`.
+- Survival by sex
+- Survival by passenger class
+- Survival by sex and passenger class
+- Age and fare distributions
+- Family-related variables
+- Correlation analysis
 
 ---
 
-## Part B: Predictive Modeling & Recommendations
+## Part B: Predictive Modeling
 
-### Combined Model Comparison Table
+### Data Preparation
 
-| Model Type     | Algorithm                          | Metric 1        | Metric 2         | Metric 3      | Metric 4        | Metric 5       |
-| :------------- | :--------------------------------- | :-------------- | :--------------- | :------------ | :-------------- | :------------- |
-| **Classifier** | **Logistic Regression**            | **Accuracy:** — | **Precision:** — | **Recall:** — | **F1-Score:** — | **ROC-AUC:** — |
-| **Classifier** | **Decision Tree (Max Depth=4)**    | **Accuracy:** — | **Precision:** — | **Recall:** — | **F1-Score:** — | **ROC-AUC:** — |
-| **Classifier** | **Random Forest (Tuned)**          | **Accuracy:** — | **Precision:** — | **Recall:** — | **F1-Score:** — | **ROC-AUC:** — |
-| **Regressor**  | **Multivariate Linear Regression** | **MAE:** —      | **RMSE:** —      | **R²:** —     | **Adj R²:** —   | N/A            |
+Classification features:
 
-### Class Imbalance & Hyperparameter Tuning
+`pclass`, `sex`, `age`, `sibsp`, `parch`, `fare`, `embarked`
 
-* **Imbalance Handling:** The project compares a baseline Random Forest, class-weighted Random Forest, and SMOTE applied **only to the training data**.
+A stratified 80/20 train-test split was used.
 
-* **GridSearchCV:** Hyperparameter tuning is performed using 5-fold cross-validation with F1-score as the scoring metric.
+Numerical features were median-imputed and standardized. Categorical features were imputed using the most frequent value and one-hot encoded.
 
-* **Random Forest OOB Score:** The Random Forest model uses out-of-bag evaluation to provide an additional validation measure.
+Preprocessing was fitted on the training data and applied to the test data.
 
-* **Regression Residuals:** A residual plot is generated to examine the relationship between predicted and actual fare values and identify potential non-constant variance.
+### Classification Models
+
+- Logistic Regression
+- Decision Tree
+- Random Forest
+
+### Classification Results
+
+| Model | Accuracy | Precision | Recall | F1 Score | ROC-AUC |
+|---|---:|---:|---:|---:|---:|
+| Logistic Regression | **0.8090** | **0.7833** | **0.6912** | **0.7344** | **0.8610** |
+| Decision Tree | **0.8090** | **0.8148** | **0.6471** | **0.7200** | Reported in notebook |
+| Random Forest | **0.8202** | **0.7813** | **0.7353** | **0.7576** | Reported in notebook |
+
+### Confusion Matrices
+
+- Logistic Regression: `[[97, 13], [21, 47]]`
+- Decision Tree: `[[100, 10], [24, 44]]`
+- Random Forest: `[[96, 14], [18, 50]]`
 
 ---
 
-## Final Recommendation
+## Class Imbalance
 
-The final model selection is based on the evaluation results produced by `02_modeling.ipynb`. Classification models are compared using Accuracy, Precision, Recall, F1-Score, and ROC-AUC, while the regression model is evaluated using MAE, RMSE, R², and Adjusted R².
+Three Random Forest approaches were compared:
+
+1. Baseline Random Forest
+2. Random Forest with `class_weight="balanced"`
+3. Custom SMOTE-style oversampling applied only to the training data
+
+SMOTE-style oversampling was performed after the train/test split, using only the training data.
+
+The Accuracy, Precision, Recall, F1 Score, and ROC-AUC results are reported in `02_modeling.ipynb`.
+
+---
+
+## Random Forest Hyperparameter Tuning
+
+`GridSearchCV` was used with 5-fold cross-validation and F1 Score as the scoring metric.
+
+### Best Parameters
+
+```text
+{
+    'max_depth': 5,
+    'max_features': 'sqrt',
+    'n_estimators': 50
+}
